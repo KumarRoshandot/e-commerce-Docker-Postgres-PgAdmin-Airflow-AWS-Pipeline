@@ -1,0 +1,4 @@
+item_id,sku,inventory_id,manufacture_id,item_name,item_price,item_weight,created_date,modified_date
+item_1,sku1,inventory_id_1,manufacture1,item_name1,10.2,10,6/23/2023,6/23/2023
+item_2,sku2,inventory_id_2,manufacture3,item_name3,200.2,30,6/23/2023,6/23/2023
+item_3,sku3,inventory_id_3,manufacture4,item_name4,300.2,50,6/23/2023,6/23/2023

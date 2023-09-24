@@ -1,20 +1,20 @@
-version: "3.8"
+version: "3.9"
 services:
   db:
-    image: postgres
+    image: postgres:16-alpine
     container_name: local_pgdb
     restart: always
     ports:
       - "5432:5432"
     env_file:
-      - .postgresenv
+      - postgresenv
     volumes:
       - ./init_db_data:/docker-entrypoint-initdb.d
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
     depends_on:
-      - postgres
+      - db
     restart: always
     ports:
       - "8888:80"
@@ -22,3 +22,6 @@ services:
       - pgadminenv
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  pgadmin-data:
