@@ -1,8 +1,6 @@
 # e-commerce-use-case
 Use case based on e-commerce domain
 
-## Use case
-
 ---
 This Repo is split into 3 sections:
 1. [Data Pipelines](https://github.com/KumarRoshandot/e-commerce-use-case/tree/main/Data_Pipelines)
@@ -10,6 +8,7 @@ This Repo is split into 3 sections:
 3. [System Design](https://github.com/KumarRoshandot/e-commerce-use-case/tree/main/System_Design)
 
 ---
+# Use case in Question
 ## Section1: Data Pipelines
 An e-commerce company requires that users sign up for a membership on the website in order to purchase a product from the platform. As a data engineer under this company, you are tasked with designing and implementing a pipeline to process the membership applications submitted by users on an hourly interval.
 
