@@ -1,0 +1,11 @@
+{
+  "s3_application_inp_loc": "s3://datalake-ifrs-in-income-com-sg/test1/input/",
+  "s3_success_application_out_loc": "s3://datalake-ifrs-in-income-com-sg/test1/output/successfull_application/",
+  "s3_unsuccess_application_out_loc": "s3://datalake-ifrs-in-income-com-sg/test1/output/unsuccessfull_application/",
+  "s3_archiving_loc": "s3://datalake-ifrs-in-income-com-sg/test1/archive/",
+  "glue_config" : {
+    "glue_job_name": "datalake-user-application-etl-job",
+    "glue_dpus": 5,
+    "glue_concurrent_run_limit" : 1
+  }
+}
