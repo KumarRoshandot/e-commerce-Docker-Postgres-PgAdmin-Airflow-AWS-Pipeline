@@ -1,5 +1,5 @@
-membership_id,order_id,payment_id,item_id,quantity,item_total_price,item_total_weight,date_of_txn
-Vega_91945,purchase_1,payment_id_1,item_1,1,28.77,3,6/23/2023
-Lee_d3d5c,purchase_1,payment_id_1,item_2,3,100.00,4,6/24/2023
-Weaver_feb81,purchase_2,payment_id_2,item_3,3,88.00,10,3/12/2023
-Ortega_17e39,purchase_3,payment_id_3,item_3,4,76.00,11,1/24/2023
+membership_id,order_id,payment_id,item_id,quantity,item_total_price,item_total_weight,date_of_txn,status
+Vega_91945,purchase_1,payment_id_1,item_1,1,28.77,3,6/23/2023,completed
+Lee_d3d5c,purchase_1,payment_id_1,item_2,3,100.00,4,6/24/2023,failed
+Weaver_feb81,purchase_2,payment_id_2,item_3,3,88.00,10,3/12/2023,completed
+Ortega_17e39,purchase_3,payment_id_3,item_3,4,76.00,11,1/24/2023,completed

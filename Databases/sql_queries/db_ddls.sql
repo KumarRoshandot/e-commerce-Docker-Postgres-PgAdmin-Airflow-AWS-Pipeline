@@ -125,6 +125,7 @@ CREATE TABLE IF NOT EXISTS public.tb_f_sales_transactions
     item_total_price numeric(10, 2) NOT NULL,
     item_total_weight numeric(10, 2) NOT NULL,
     date_of_txn date NOT NULL,
+    status character varying(100) NOT NULL,
     etl_date date NOT NULL DEFAULT CURRENT_DATE
 );
 

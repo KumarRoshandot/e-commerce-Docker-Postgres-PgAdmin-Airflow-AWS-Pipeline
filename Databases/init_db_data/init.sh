@@ -149,6 +149,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       item_total_price DECIMAL(10, 2) NOT NULL,
       item_total_weight DECIMAL(10, 2) NOT NULL,
       date_of_txn DATE NOT NULL,
+      status character varying(100) NOT NULL,
       etl_date DATE NOT NULL DEFAULT CURRENT_DATE,
       FOREIGN KEY (membership_id) REFERENCES tb_d_user_applications(membership_id),
       FOREIGN KEY (payment_id) REFERENCES tb_d_payment_details(payment_id),
@@ -164,7 +165,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 		comment on column tb_f_sales_transactions.date_of_txn is 'Date of Purchase';
 		comment on column tb_f_sales_transactions.etl_date is 'Date on Which Data was loaded';
 
-		COPY tb_f_sales_transactions (membership_id,order_id,payment_id,item_id,quantity,item_total_price,item_total_weight,date_of_txn)
+		COPY tb_f_sales_transactions (membership_id,order_id,payment_id,item_id,quantity,item_total_price,item_total_weight,date_of_txn,status)
 		FROM '/docker-entrypoint-initdb.d/dataset/sales_transactions.csv'
 		DELIMITER ','
 		CSV HEADER;
