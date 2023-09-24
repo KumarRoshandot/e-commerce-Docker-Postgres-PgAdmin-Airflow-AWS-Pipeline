@@ -1,0 +1,47 @@
+-- Set Users and its roles
+CREATE USER ${APP_DB_LOGISTIC_USER} WITH PASSWORD ${APP_DB_LOGISTIC_PASS};
+CREATE USER ${APP_DB_ANALYTICS_USER} WITH PASSWORD ${APP_DB_ANALYTICS_PASS};
+CREATE USER ${APP_DB_SALES_USER} WITH PASSWORD ${APP_DB_SALES_USER};
+CREATE USER ${APP_DB_ADMIN_USER} WITH PASSWORD ${APP_DB_ADMIN_PASS};
+
+CREATE ROLE role_logistics;
+CREATE ROLE roles_analytics;
+CREATE ROLE roles_sales;
+
+ALTER USER ${APP_DB_LOGISTIC_USER} SET ROLE role_logistics;
+ALTER USER ${APP_DB_ANALYTICS_USER} SET ROLE roles_analytics;
+ALTER USER ${APP_DB_SALES_USER} SET ROLE roles_sales;
+
+-- tb_user_applications Section
+DROP TABLE IF EXISTS tb_user_applications;
+
+CREATE TABLE tb_user_applications (
+  tb_user_applications_id SERIAL,
+  membership_id character varying(100) NOT NULL,
+  first_name character varying(100) NOT NULL,
+  last_name character varying(100) NOT NULL,
+  email character varying(100) NOT NULL,
+  birthday character varying(8) NOT NULL,
+  mobile_no integer,
+  above_18 boolean NOT NULL,
+  CONSTRAINT pk_tb_user_applications PRIMARY_KEY(membership_id)
+);
+
+comment on column tb_user_applications.membership_id is 'The <last_name>_<hash(YYYYMMDD)>(truncated to first 5 digits of hash)';
+comment on column tb_user_applications.first_name is 'First name of Member';
+comment on column tb_user_applications.last_name is 'Last name of Member';
+comment on column tb_user_applications.email is 'Email of Member';
+comment on column tb_user_applications.birthday is 'Birthday of Member in YYYYMMDD format';
+comment on column tb_user_applications.mobile_no is 'Mobile no. of Member';
+comment on column tb_user_applications.above_18 is 'Applicant is over 18 years old as of 1 Jan 2022 or not';
+
+COPY tb_user_applications (membership_id,first_name,last_name,email,birthday,mobile_no,above_18)
+FROM '/docker-entrypoint-initdb.d/successfull_application/23_09_2023_201926/part*.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Grant privileges to Analytics
+GRANT SELECT ON tb_user_applications TO roles_analytics;
+
+-- Grant Admin privileges to admin
+GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${APP_DB_ADMIN_USER};

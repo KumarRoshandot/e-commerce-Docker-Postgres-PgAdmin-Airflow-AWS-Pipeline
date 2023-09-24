@@ -75,7 +75,7 @@ def transform(df):
             trim(name) as name
             ,trim(email) as email
             ,trim(date_of_birth) as date_of_birth
-            ,trim(mobile_no) as mobile_no
+            ,trim(regexp_replace(mobile_no,'\\\\s+','')) as mobile_no
             ,to_date(dateutil_parser_udf(trim(date_of_birth)),'yyyy-MM-dd') as date_of_birth_derived
             ,trim(regexp_replace(regexp_replace(trim(name), r'^(Mr[s]?|Dr)[\\\\.]',''), r' (MD|PhD|DDS|DVM)$','')) as name_derived
         from USER_APPLICATIONS_TBL
@@ -101,7 +101,7 @@ def transform(df):
                  when ( 
                         nvl(mobile_no,'na') = 'na' or 
                         mobile_no = '' or
-                        length(regexp_replace(mobile_no,'\\\\s+','')) <> 8 
+                        length(mobile_no) <> 8 
                         ) then 1 
                  when (
                        nvl(date_of_birth_derived,'na') = 'na' or 
