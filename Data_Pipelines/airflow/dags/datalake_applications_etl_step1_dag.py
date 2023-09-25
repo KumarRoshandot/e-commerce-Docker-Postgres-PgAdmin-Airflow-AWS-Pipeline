@@ -1,3 +1,12 @@
+"""
+This Dag will Read the json config file present in
+S3 bucket using airflow Variables .
+
+This dag will Trigger AWS Glue Job with parameters
+coming from config files.
+1.glue job details ( name , dpus etc .. )
+2.s3 bucket info involded in  data processing
+"""
 import json
 from datetime import datetime, timedelta
 from airflow import DAG
@@ -18,6 +27,11 @@ args = {
 
 
 def get_config():
+    """ Get Config Data
+
+        :rtype: dict
+        :returns: A Config Data necessary for etl job
+    """
     try:
         s3_client = boto3.client('s3')
         bucket_name = Variable.get("config_s3_bucket")

@@ -11,6 +11,9 @@ To SetUp/ Orchestrate ETL Pipeline Job for User applications
 
 - AWS Account
 - AWS MWAA (Managed Workflow for Apache Airflow)
+-     Setup Airflow Variable 
+      --> config_s3_bucket (Bucket Name where Config Files are placed)
+      --> etl_config_step1 (Object Key , folder path till file name of config json location)
 - AWS S3 Bucket
 -     For Input Files
       For Output Files
@@ -109,5 +112,8 @@ To SetUp/ Orchestrate ETL Pipeline Job for User applications
 - Input and  Outfiles has been placed in the respective folders in this section.
 - Logging is setup at Airflow Dag and AWS Glue level.
 - ScreenShots at each level is supplied with the scripts
-			
-          	
+---
+## Design Motivation
+- AWS Glue is a serverless job , which means we dont need to worry about infra.
+- Easily scalable as per the load increases, Since its a spark job and glue resources can be scaled up and down depending on load.
+- cost effective

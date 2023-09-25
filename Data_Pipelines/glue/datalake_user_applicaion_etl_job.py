@@ -1,3 +1,13 @@
+"""
+This is a Glue Spark job.
+
+1. It perform ETL for the user application use case.
+2. Tt recieve parameters from airflow job.
+3. It Load the CSV files from s3 input location , clean & transform the data.
+4. It Split the data into 2 , successful and unsuccessful category based on validation checks.
+5. Load it onto s3 output locations as per the category.
+6. once the ETL is successful , the job will archive the input data to archive s3 location.
+"""
 import sys
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext,SparkConf
@@ -10,8 +20,6 @@ import logging
 import boto3
 from dateutil import parser as dateutil_parser
 
-
-glue = boto3.client('glue', 'ap-southeast-1')
 date_time_now = datetime.now()
 current_date_py = date_time_now.strftime('%d_%m_%Y')
 current_datetime_py = date_time_now.strftime('%d_%m_%Y_%H%M%S')
@@ -34,19 +42,25 @@ conf = SparkConf().setAppName("USER_APPLICATION_ETL")\
                   .set("spark.sql.broadcastTimeout", "3600")\
                   .set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
+# Initialise Glue and spark session
 sc = SparkContext(conf=conf)
-glueContext = GlueContext(sc)
+glueContext = GlueContext(assc)
 spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
 
+# For Date Format Handling , Taking the help of python dateutil and registering as UDF
 dateutil_parser_udf = udf(lambda x: dateutil_parser.parse(x).strftime('%Y-%m-%d'), StringType())
 spark.udf.register("dateutil_parser_udf", dateutil_parser_udf)
 
-
 def extract(s3_path):
-    """
-    This function will be used to read the data from target table and converts to dataframe.
+    """Extract the input data from a CSV File placed on s3 location
+
+    :type s3_path: String
+    :param s3_path: The S3 Path from which data has to be read
+
+    :rtype: spark dataframe
+    :returns: Input Data
     """
     try:
         input_df = spark.read.format('csv') \
@@ -64,11 +78,20 @@ def extract(s3_path):
 
 
 def transform(df):
-    """
-    This function will be used to write the data to target table.
+    """Perform Transformation on the data provided
+
+    :type df: Spark Dataframe
+    :param df: Data on which transformation is expected
+
+    :rtype: spark dataframe
+    :returns: Transformed Data
     """
     try:
-        # ---- Clean Up Data
+        # ----------------- Clean Up Data
+        # Remove Leading and trailing spaces from each column
+        # name field : Remove Salutations and Designation
+        # mobileno filed : Replace inbetween space
+        # date_of_birth : simplify column data to a unified date datatype
         df.createOrReplaceTempView("USER_APPLICATIONS_TBL")
         sql = f'''            
         select
@@ -84,7 +107,18 @@ def transform(df):
         df_main = spark.sql(sql)
         df_main.createOrReplaceTempView("USER_APPLICATIONS_TBL")
 
-        # ---- Adding Success/UnSuccess Flagging
+        # --------------- Derive columns
+        # date_of_birth_derived : date_of_birth format YYYYMMDD
+        # First_name : first name of the name column value
+        # Last_name : last name of the name column value
+        # above_18 : boolean value with true or false
+
+        # -----------------Success/UnSuccess Flagging
+        # If any of the column is NULL or Space
+        # length of mobileno column is 8
+        # Date Difference in Years Between '2022-01-01' and date_of_birth column is more than 18
+        # Email column has values with expression  XXXX@XXXX.com or XXXXX@XXXX.net
+
         sql = '''
         select
             element_at(split(name_derived,'\\\\s+'),-2) as first_name,
@@ -128,7 +162,8 @@ def transform(df):
         success_df = df_main.where("application_flag = 0")
         success_df.createOrReplaceTempView("USER_APPLICATIONS_TBL")
 
-        # Prepare Dataset for Successful Application
+        # ----------------------Prepare Dataset for Successful Application
+        # Derive membership_id value truncated to first 5 digits of hash value in <last_name>_<SHA256 hash value of date_of_birth>)
         sql = '''
         select 
             first_name,
@@ -153,13 +188,16 @@ def transform(df):
 
 
 def load(df, s3_path):
-    '''
-    :param df:
-    :param s3_path:
-    :return:
-    '''
-    """
-    This function will be used to write the data to target table.
+    """Load the Data to s3 location as CSV files
+
+    :type df: Spark Dataframe
+    :param df: Data to be written on s3
+
+    :type s3_path: String
+    :param s3_path: s3 location where data will be written to
+
+    :rtype: None
+    :returns: None
     """
     try:
         df.coalesce(1).write \
@@ -177,8 +215,17 @@ def load(df, s3_path):
 
 
 def archive(s3_path,s3_archive_path):
-    """
-        This function will be used to write the data to target table.
+    """Archive the Data from one location to another
+       Taking the help of boto3 s3 client to perform COPY and DELETE Operation
+
+    :type s3_archive_path: String
+    :param s3_archive_path: The TO location on which data to be moved
+
+    :type s3_path: String
+    :param s3_path: The FROM location from which data will be moved
+
+    :rtype: None
+    :returns: None
     """
     try:
         import boto3
@@ -219,11 +266,15 @@ def main():
         # Perform ETL
         unsuccessful_df, success_df = transform(extract(args['s3_input']))
 
+        # If there are any successful record to be written
         if len(success_df.head(1)) != 0:
             load(success_df, args['s3_successful_output'] + current_datetime_py + '/')
 
+        # If there are any unsuccessful records to be written
         if len(unsuccessful_df.head(1)) != 0:
             load(unsuccessful_df, args['s3_unsuccessful_output'] + current_datetime_py + '/')
+
+        # IF there are no records both in successful and unsuccessful dataframe , then there is some issue with processing
         elif len(success_df.head(1)) == 0:
             msg = "Issue in Deriving Successful and Unsuccessful User Applications, Both doesnt have Records to Save"
             logger.info(msg)
