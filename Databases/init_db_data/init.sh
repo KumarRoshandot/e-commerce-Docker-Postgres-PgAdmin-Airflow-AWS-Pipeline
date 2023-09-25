@@ -177,7 +177,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 		GRANT SELECT ON tb_f_sales_transactions TO role_logistics;
 		GRANT UPDATE ON tb_f_sales_transactions TO role_logistics;
 
-    -- Grant privileges to logistics role
+    -- Grant privileges to sales role
 		GRANT SELECT ON tb_d_items TO roles_sales;
 		GRANT INSERT ON tb_d_items TO roles_sales;
 		GRANT UPDATE ON tb_d_items TO roles_sales;
