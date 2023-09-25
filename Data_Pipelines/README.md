@@ -42,7 +42,7 @@ To SetUp/ Orchestrate ETL Pipeline Job for User applications
 ---
 
 ##  ETL Flow ( Give a Diagram here )
-![airflow_glue.drawio.png](..%2F..%2F..%2Fairflow_glue.drawio.png)
+![airflow_glue.drawio.png](./screenshots/airflow_glue.drawio.png)
 
 ### ETL Steps Walkthrough
 - Input CSV files are placed in s3 Input Bucket ( datasets and dropped into a folder on an hourly basis ).
