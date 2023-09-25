@@ -12,13 +12,12 @@ The diagram below presents the serverless architecture you can deploy in minutes
 ![Design](./Design2_drawio.png)
 
 ---
-AWS services used:
+## AWS services used:
 - Amazon CloudFront — Core. Provides a caching layer to reduce latency and the cost of image processing for subsequent identical requests.
 
 - AWS Lambda — Core. Runs functions to retrieve, modify, and invoke other services to analyze images. Also runs a function to support URL signature validation.
 
-- Amazon S3 — Core. Stores images, logs, and a demo UI.
--      
+- Amazon S3 — Core. Stores images, logs, and a demo UI. 
 
 - AWS Identity and Access Management (IAM) — Supporting. Allows for fine-grained access permissions.
 
@@ -31,6 +30,8 @@ AWS services used:
 - Amazon Rekognition — Optional. Uses machine learning (ML) to analyze images.
 
 - Amazon Managed Streaming for Kafka - Amazon MSK makes it easy to ingest and process streaming data in real time with fully managed Apache Kafka. 
+
+- Amazon Quick Insight - Amazon QuickSight is a fast, cloud-powered business intelligence service that delivers insights to everyone in your organization. As a fully managed service, Amazon QuickSight lets you easily create and publish interactive dashboards that include machine learning (ML) insights. 
 
 This solution uses AWS services that aren’t available in all AWS Regions. You must launch this solution in an AWS Region where these services are available.
 
