@@ -48,7 +48,7 @@ To SetUp Postgres DB with e-commerce DB setup & pgadmin using docker
 
 ## Docker Components
 1. Postgres from [Postgres DockerImage](https://hub.docker.com/_/postgres)
-2. PgAdmin from [Pgadmin DockerImage](https://hub.docker.com/_/pgadmin4)
+2. PgAdmin from [Pgadmin DockerImage](https://hub.docker.com/r/dpage/pgadmin4)
 
 ### Docker Compose
 1. run 'docker-compose up -d'
